@@ -1,11 +1,19 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
+export const revalidate = 86400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articles = await prisma.article.findMany({
-    select: { id: true, createdAt: true },
-    orderBy: { createdAt: "desc" },
-  });
+  let articles: { id: string; createdAt: Date }[] = [];
+
+  try {
+    articles = await prisma.article.findMany({
+      select: { id: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("sitemap prisma query failed:", error);
+  }
 
   const articleUrls: MetadataRoute.Sitemap = articles.map((article) => ({
     url: `https://www.truesportslive.com/articles/${article.id}`,
