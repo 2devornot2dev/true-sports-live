@@ -15,6 +15,9 @@ import { FaInstagram } from "react-icons/fa";
 import { getLeagueArticles } from "@/lib/actions/get-leagure-articles";
 import { LeagueArticleFeed } from "@/components/articles/league-article-feed";
 
+
+export const revalidate = 3600;
+
 interface Params {
   params: Promise<{
     league: string;

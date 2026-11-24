@@ -7,7 +7,7 @@ import { MlbBoxScore } from "@/components/leagues/mlb-boxscore";
 import { NbaBoxScore } from "@/components/leagues/nba-boxscore";
 
 // Import our new sport-specific components (we will make these in Step 2)
-
+export const revalidate = 3600;
 
 interface Params {
   params: Promise<{ league: string; gameId: string }>;

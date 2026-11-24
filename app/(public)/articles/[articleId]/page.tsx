@@ -3,11 +3,15 @@ import { notFound } from "next/navigation";
 import { SingleArticlePage } from "@/components/articles/single-article-page";
 import { getLeagueArticles } from "@/lib/actions/get-leagure-articles";
 
+
+export const revalidate = 86400;
 interface Params {
   params: Promise<{
     articleId: string;
   }>;
 }
+
+
 
 export default async function Page({ params }: Params) {
   const { articleId } = await params;

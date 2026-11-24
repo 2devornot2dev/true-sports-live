@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 import { handleGeneratedArticles } from "@/lib/handlers/handle-generated-articles";
 import { handlerGeneratedStory } from "@/lib/handlers/handle-generated-story";
 
-
 interface Params {
   params: Promise<{
     systemTaskId: string;
@@ -20,7 +19,7 @@ export async function POST(request: Request, { params }: Params) {
     // 1. Security Check: Verify the webhook secret
     const headerStore = await headers();
     const webhookSecret = headerStore.get("x-webhook-secret");
-    
+
     if (webhookSecret !== process.env.WEBHOOK_SECRET_KEY) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -31,28 +30,44 @@ export async function POST(request: Request, { params }: Params) {
     });
 
     if (!task) {
-      return NextResponse.json({ error: "System task not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "System task not found" },
+        { status: 404 },
+      );
+    }
+
+    if (task.status === "COMPLETED") {
+      return NextResponse.json({
+        message: `Task ${systemTaskId} already completed`,
+      });
     }
 
     const data = await request.json();
 
     switch (task.type) {
-      case SystemTaskType.GENERATE_ARTICLES: 
+      case SystemTaskType.GENERATE_ARTICLES:
         await handleGeneratedArticles(task, data);
         break;
 
       case SystemTaskType.STORY_GENERATOR:
-        await handlerGeneratedStory(task,data)
-        break
+        await handlerGeneratedStory(task, data);
+        break;
 
       default:
-        return NextResponse.json({ error: "Unknown system task type" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Unknown system task type" },
+          { status: 400 },
+        );
     }
 
-    return NextResponse.json({ message: `Successfully processed system task ID: ${systemTaskId}` });
-
+    return NextResponse.json({
+      message: `Successfully processed system task ID: ${systemTaskId}`,
+    });
   } catch (error) {
     console.error("Webhook Error:", error);
-    return NextResponse.json({ error: "Internal server error processing webhook" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error processing webhook" },
+      { status: 500 },
+    );
   }
 }
