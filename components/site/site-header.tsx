@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sheet"
 import Image from "next/image"
 import { SpotlightSheet } from "../spotlight/spotlight-sheet"
-import { getSpotlight } from "@/lib/actions/get-spotlight"
+import type { getSpotlight } from "@/lib/actions/get-spotlight"
 
 const navItems = ["Home", ...leagues, "Work With Us"]
 const mobileNavItems = [...navItems, "Merch"]
@@ -25,15 +25,13 @@ function hrefForItem(item: string): string {
   return `/${item.toLowerCase()}`
 }
 
-// Items that keep their own fixed color scheme and never take the
-// "active route" white/foreground treatment.
 const EXCLUDED_FROM_ACTIVE_STYLING = ["Merch", "Work With Us"]
 
 type SiteHeaderProps = {
-  spotlight: Awaited<ReturnType<typeof getSpotlight>>
+  spotlight?: Awaited<ReturnType<typeof getSpotlight>>
 }
 
-export function SiteHeader({ spotlight }: SiteHeaderProps) {
+export function SiteHeader({ spotlight = null }: SiteHeaderProps) {
   const [open, setOpen] = useState(false)
   const [openSpotlight, setOpenSpotlight] = useState(false)
   const pathname = usePathname()
@@ -88,12 +86,6 @@ export function SiteHeader({ spotlight }: SiteHeaderProps) {
                 className="flex items-center gap-2 px-4 pt-2"
                 onClick={() => setOpen(false)}
               >
-                {/* 
-                  FIXED: 
-                  - Reduced size to 32x32 
-                  - Removed 'rounded-full' 
-                  - Added 'object-contain shrink-0' to prevent cropping/distortion 
-                */}
                 <Image
                   src="/images/meta-logo-1.png"
                   alt="True Sports Logo"
@@ -122,7 +114,6 @@ export function SiteHeader({ spotlight }: SiteHeaderProps) {
         </Sheet>
 
         <a href="/" className="flex items-center gap-2">
-          {/* Also updated the desktop logo to ensure it doesn't crop weirdly either */}
           <Image
             src="/images/meta-logo-1.png"
             alt="True Sports Logo"
@@ -165,11 +156,13 @@ export function SiteHeader({ spotlight }: SiteHeaderProps) {
         </div>
       </div>
 
-      <SpotlightSheet
-        data={spotlight}
-        open={openSpotlight}
-        onOpenChange={setOpenSpotlight}
-      />
+      {spotlight && (
+        <SpotlightSheet
+          data={spotlight}
+          open={openSpotlight}
+          onOpenChange={setOpenSpotlight}
+        />
+      )}
     </header>
   )
 }

@@ -9,10 +9,10 @@ export default async function LeagueLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const spotlight = await getSpotlight();
+  
   return (
     <div className="flex  flex-col min-h-screen">
-      <SiteHeader spotlight={spotlight} />
+      <SiteHeader />
       <main className="container mx-auto max-w-7xlflex-1">{children}</main>
       <SiteFooter />
     </div>

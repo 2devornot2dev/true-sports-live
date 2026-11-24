@@ -9,10 +9,10 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const spotlight = await getSpotlight();
+  
   return (
     <div className="flex flex-col min-h-screen">
-      <SiteHeader spotlight={spotlight} />
+      <SiteHeader  />
 
       {/* Page Content */}
       <main className="flex-1">{children}</main>
