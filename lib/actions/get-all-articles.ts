@@ -1,29 +1,30 @@
 import { prisma } from "../prisma";
 
 export async function getAllArticles() {
+  try {
     const articles = await prisma.article.findMany({
-        orderBy: {
-            createdAt: "desc"
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
         },
-        include: {
-            author: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                    image: true
+      },
+      take: 20,
+    });
 
-                }
-            }
-        },
-        take: 20
-    })
-
-    return articles
+    return articles;
+  } catch (error) {
+    console.error("getAllArticles failed:", error);
+    return [];
+  }
 }
 
-// Type of the resolved array
 export type Articles = Awaited<ReturnType<typeof getAllArticles>>;
-
-// Type of a single article (element type of the array)
 export type Article = Articles[number];
