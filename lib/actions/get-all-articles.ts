@@ -1,3 +1,4 @@
+// lib/actions/get-all-articles.ts
 import { prisma } from "../prisma";
 
 export async function getAllArticles() {
@@ -22,7 +23,7 @@ export async function getAllArticles() {
     return articles;
   } catch (error) {
     console.error("getAllArticles failed:", error);
-    return [];
+    throw error;
   }
 }
 
