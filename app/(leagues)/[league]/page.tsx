@@ -1,3 +1,5 @@
+// app/(league)/[league]/page.tsx
+import { notFound } from "next/navigation";
 import { TrendingUp } from "lucide-react";
 import { leagues, socialPosts, leagueAccent } from "@/lib/data";
 import { League } from "@/lib/generated/prisma/enums";
@@ -15,8 +17,15 @@ import { FaInstagram } from "react-icons/fa";
 import { getLeagueArticles } from "@/lib/actions/get-leagure-articles";
 import { LeagueArticleFeed } from "@/components/articles/league-article-feed";
 
-
 export const revalidate = 3600;
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return [
+    ...leagues.map((l) => ({ league: l.toLowerCase() })),
+    { league: "merch" },
+  ];
+}
 
 interface Params {
   params: Promise<{
@@ -36,13 +45,7 @@ export default async function LeaguePage({ params }: Params) {
   const currentLeague = leagues.find((l) => l.toLowerCase() === leagueParam);
 
   if (!currentLeague) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <h1 className="text-2xl font-bold text-muted-foreground">
-          League not found.
-        </h1>
-      </div>
-    );
+    notFound();
   }
 
   const articles = await getLeagueArticles(currentLeague.toUpperCase() as League);
@@ -76,10 +79,8 @@ export default async function LeaguePage({ params }: Params) {
                 Latest Drops
               </h3>
             </div>
-            
-            {/* FIXED: Passed the array directly. LeagueArticleFeed handles the grid internally. */}
+
             <LeagueArticleFeed articles={otherArticles} />
-            
           </div>
         </div>
 

@@ -1,13 +1,18 @@
 // app/(leagues)/[league]/game/[gameId]/page.tsx
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { fetchGameStats } from "@/lib/sports-api";
 import { League } from "@/lib/data";
 import { MlbBoxScore } from "@/components/leagues/mlb-boxscore";
 import { NbaBoxScore } from "@/components/leagues/nba-boxscore";
 
-// Import our new sport-specific components (we will make these in Step 2)
 export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return [];
+}
 
 interface Params {
   params: Promise<{ league: string; gameId: string }>;
@@ -20,7 +25,9 @@ export default async function GameStatsPage({ params }: Params) {
 
   const gameData = await fetchGameStats(leagueParam, gameId);
 
-  if (!gameData) return <div>Game not found.</div>;
+  if (!gameData) {
+    notFound();
+  }
 
   const homeTeam = gameData.boxscore?.teams?.find((t: any) => t.homeAway === 'home');
   const awayTeam = gameData.boxscore?.teams?.find((t: any) => t.homeAway === 'away');

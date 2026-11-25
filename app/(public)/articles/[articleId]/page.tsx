@@ -1,17 +1,21 @@
+// app/articles/[articleId]/page.tsx
 import { getArticleById } from "@/lib/actions/get-article-id";
 import { notFound } from "next/navigation";
 import { SingleArticlePage } from "@/components/articles/single-article-page";
 import { getLeagueArticles } from "@/lib/actions/get-leagure-articles";
 
-
 export const revalidate = 86400;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return [];
+}
+
 interface Params {
   params: Promise<{
     articleId: string;
   }>;
 }
-
-
 
 export default async function Page({ params }: Params) {
   const { articleId } = await params;
@@ -20,7 +24,7 @@ export default async function Page({ params }: Params) {
   const article = await getArticleById(articleId);
 
   if (!article) {
-    return notFound();
+    notFound();
   }
 
   // 2. Fetch the sidebar articles using the league from the main article

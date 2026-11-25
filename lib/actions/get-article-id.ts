@@ -1,3 +1,4 @@
+// lib/actions/get-article-id.ts
 import { prisma } from "../prisma";
 
 export async function getArticleById(id: string) {
@@ -19,7 +20,7 @@ export async function getArticleById(id: string) {
     return article;
   } catch (error) {
     console.error("getArticleById failed:", error);
-    return null;
+    throw error;
   }
 }
 
